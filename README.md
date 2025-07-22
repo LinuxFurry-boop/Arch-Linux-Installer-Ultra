@@ -47,12 +47,12 @@ This script provides a streamlined installation process for Arch Linux with eith
 From the Arch Linux live environment:
 ```bash
 curl -O https://github.com/LinuxFurry-boop/Arch-Linux-Installer-Ultra
-chmod +x arch-autoinstaller.sh
+chmod +x ArchInstall.sh
 ```
 
 ### Step 2: Run the Installer
 ```bash
-sudo ./arch-autoinstaller.sh
+sudo ./ArchInstall.sh
 ```
 
 ### Step 3: Interactive Configuration
@@ -88,7 +88,7 @@ reboot
 You can edit the script before running it to modify default values:
 
 ```bash
-nano arch-autoinstaller.sh
+nano ArchInstall.sh
 ```
 
 Key configuration variables:
@@ -170,11 +170,7 @@ The script supports two desktop environments:
      arch-chroot /mnt
      grub-install /dev/sdX
      grub-mkconfig -o /boot/grub/grub.cfg
-     ```
-
-### Log Files
-- Installation log: `/var/log/arch-autoinstall.log`
-- Validation log: `/var/log/install-validation.log`
+     ``'
 
 ## FAQ
 
