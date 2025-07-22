@@ -46,7 +46,7 @@ This script provides a streamlined installation process for Arch Linux with eith
 ### Step 1: Download the Script
 From the Arch Linux live environment:
 ```bash
-curl -O https://example.com/arch-autoinstaller.sh
+curl -O https://github.com/LinuxFurry-boop/Arch-Linux-Installer-Ultra
 chmod +x arch-autoinstaller.sh
 ```
 
