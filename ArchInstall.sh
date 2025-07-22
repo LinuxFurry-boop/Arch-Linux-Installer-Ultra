@@ -24,12 +24,12 @@ fi
 TARGET_DISK="/dev/nvme0n1"  # Adjust to your disk
 HOSTNAME="archbox"
 USERNAME="user"
-PASSWORD="arch123"  # Will be changed in GUI
+PASSWORD=""  # Will be set interactively
 TIMEZONE="America/New_York"
 LOCALE="en_US.UTF-8"
 KERNEL="linux"               # linux, linux-lts, linux-zen
 X11_DRIVERS="xf86-video-amdgpu" # xf86-video-intel, nvidia, etc.
-ADDITIONAL_PKGS="firefox git base-devel" # Space-separated
+ADDITIONAL_PKGS="firefox git base-devel bc" # Added 'bc' for calculations
 
 # Desktop Environment (Will be selected interactively)
 DESKTOP_ENV=""
@@ -223,9 +223,17 @@ partition_disk() {
         mount "${TARGET_DISK}p1" /mnt/boot/efi || die "Failed to mount EFI"
     else
         parted -s "$TARGET_DISK" mklabel msdos
-        parted -s "$TARGET_DISK" mkpart primary ext4 1MiB -4GiB
+        
+        # Calculate root size (min(23GB, disk_size - 4GB))
+        ROOT_SIZE="23GiB"
+        TOTAL_SIZE=$(parted -s "$TARGET_DISK" unit GiB print | grep "Disk /" | awk '{print $3}')
+        if [ "$(echo "$TOTAL_SIZE < 36" | bc -l)" -eq 1 ]; then
+            ROOT_SIZE="$(echo "$TOTAL_SIZE - 4" | bc -l)GiB"
+        fi
+
+        parted -s "$TARGET_DISK" mkpart primary ext4 1MiB "$ROOT_SIZE"  # Root (max 23GB)
         parted -s "$TARGET_DISK" set 1 boot on
-        parted -s "$TARGET_DISK" mkpart primary linux-swap -4GiB 100%
+        parted -s "$TARGET_DISK" mkpart primary linux-swap "$ROOT_SIZE" 100%  # Swap (4GB)
         
         mkfs.ext4 -F "${TARGET_DISK}1" || die "Failed to format root partition"
         mkswap "${TARGET_DISK}2" || die "Failed to create swap"
